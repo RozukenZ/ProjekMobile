@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 
-class Startupmodel extends StatelessWidget
-{
-  const Startupmodel({Key? key}) : super(key: key);
+class FriendLocatorForm extends StatelessWidget {
+  const FriendLocatorForm({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context)
-  {
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
@@ -36,21 +34,19 @@ class Startupmodel extends StatelessWidget
               ),
               const SizedBox(height: 30),
               ElevatedButton(
-                onPressed: ()
-                {
+                onPressed: () {
                   // Add navigation logic here
                 },
                 style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.purple, // Update this line
-                      foregroundColor: Colors.white, // Add this line
-                      minimumSize: const Size(double.infinity, 50),
+                  backgroundColor: Colors.purple, // Update this line
+                  foregroundColor: Colors.white, // Add this line
+                  minimumSize: const Size(double.infinity, 50),
                 ),
                 child: const Text('Next'),
               ),
               const SizedBox(height: 20),
               TextButton(
-                onPressed: ()
-                {
+                onPressed: () {
                   // Add login logic here
                 },
                 child: const Text(
