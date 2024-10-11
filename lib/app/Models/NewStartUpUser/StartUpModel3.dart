@@ -17,7 +17,7 @@ class FriendNotificationForm extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/friend_notification_image.png', // Replace with your actual image asset
+                'lib/app/Assets/StartUpAssets/navigation-49.png', // Replace with your actual image asset
                 height: 200,
                 color: Colors.white, // Adjust if needed to match the purple tint
               ),

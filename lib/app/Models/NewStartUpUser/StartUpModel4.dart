@@ -16,7 +16,7 @@ class ChatMeetingIntroForm extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/chat_meeting_image.png', // Replace with your actual image asset
+                'lib/app/Assets/StartUpAssets/chatting-1-57.png', // Replace with your actual image asset
                 height: 200,
                 color: Colors.white, // Adjust if needed to match the image tint
               ),

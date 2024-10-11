@@ -17,7 +17,7 @@ class FriendLocatorForm extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/friend_locator_image.png', // Replace with your actual image asset
+                'lib/app/Assets/StartUpAssets/notification-69.png', // Replace with your actual image asset
                 height: 200,
               ),
               const SizedBox(height: 20),
