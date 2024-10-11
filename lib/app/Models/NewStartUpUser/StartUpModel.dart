@@ -18,7 +18,7 @@ class Startupmodel extends StatelessWidget
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'navigation-82.png', // Replace with your actual image asset
+                'lib/app/Assets/StartUpAssets/navigation-82.png', // Replace with your actual image asset
                 height: 200,
               ),
               const SizedBox(height: 20),
