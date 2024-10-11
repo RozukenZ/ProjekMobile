@@ -1,3 +1,4 @@
+import 'package:anvayarencang/app/Models/HomeScreenModel/HomeScreen.dart';
 import 'package:flutter/material.dart';
 
 
@@ -86,8 +87,12 @@ class LoginScreen extends StatelessWidget
                   foregroundColor: Colors.white, // Use foregroundColor instead of onPrimary
                   padding: EdgeInsets.symmetric(vertical: 15),
                 ),
-                onPressed: () {
-                  // Handle login
+                onPressed: ()
+                {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomeScreen()),
+                  );
                 },
               ),
             ),

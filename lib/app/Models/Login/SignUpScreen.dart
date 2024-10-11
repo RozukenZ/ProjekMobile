@@ -1,3 +1,4 @@
+import 'package:anvayarencang/app/Models/Login/LoginScreen.dart';
 import 'package:flutter/material.dart';
 
 
@@ -101,7 +102,10 @@ class SignUpScreen extends StatelessWidget
                 ),
                 onPressed: ()
                 {
-                  // Handle sign up
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                  );
                 },
               ),
             ),
