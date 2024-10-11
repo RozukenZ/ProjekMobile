@@ -1,3 +1,4 @@
+import 'package:anvayarencang/app/Models/ChattingScreen/ChatScreen.dart';
 import 'package:anvayarencang/app/Models/HomeScreenModel/HomeScreen.dart';
 import 'package:flutter/material.dart';
 
@@ -77,8 +78,12 @@ class ChatListItem extends StatelessWidget
             ),
           ),
           ElevatedButton(
-            onPressed: () {
-              // Handle chat button press
+            onPressed: ()
+            {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ChatScreen()),
+              );
             },
             child: Text('Chat'),
             style: ElevatedButton.styleFrom(
