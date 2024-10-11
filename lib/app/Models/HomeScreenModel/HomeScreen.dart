@@ -1,3 +1,8 @@
+import 'package:anvayarencang/app/Models/ChattingScreen/ChatListScreen.dart';
+import 'package:anvayarencang/app/Models/ChattingScreen/NotificationScreen.dart';
+import 'package:anvayarencang/app/Models/Feature/FindFriends/FindFriendsScreen.dart';
+import 'package:anvayarencang/app/Models/Feature/FriendGeolocation/FriendGeolocationScreen.dart';
+import 'package:anvayarencang/app/Models/Feature/FriendsList/FriendsListScreen.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatelessWidget
@@ -11,7 +16,10 @@ class HomeScreen extends StatelessWidget
           icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: ()
           {
-            // Handle back button press
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => HomeScreen()),
+            );
           },
         ),
         title: Text('AnvayaRencang.', style: TextStyle(color: Colors.purple, fontWeight: FontWeight.bold)),
@@ -20,7 +28,10 @@ class HomeScreen extends StatelessWidget
             icon: Icon(Icons.notifications, color: Colors.white),
             onPressed: ()
             {
-              // Handle notification button press
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => NotificationScreen()),
+              );
             },
           ),
         ],
@@ -68,14 +79,42 @@ class HomeScreen extends StatelessWidget
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildNavItem(Icons.location_on, true),
-                  _buildNavItem(Icons.search, false),
-                  _buildNavItem(Icons.chat_bubble, false),
-                  _buildNavItem(Icons.person, false),
+                  _buildNavItem(Icons.location_on, true, ()
+                  {
+                    // navigate to location page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => FriendGeolocationScreen()),
+                    );
+                  }),
+                  _buildNavItem(Icons.search, false, ()
+                  {
+                    // navigate to search page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => FindFriendsScreen()),
+                    );
+                  }),
+                  _buildNavItem(Icons.chat_bubble, false, ()
+                  {
+                    // navigate to chat page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ChatListScreen()),
+                    );
+                  }),
+                  _buildNavItem(Icons.person, false, ()
+                  {
+                    // navigate to person page
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => FriendListScreen()),
+                    );
+                  }),
                 ],
               ),
             ),
-          ),
+          )
         ],
       ),
     );
@@ -99,12 +138,11 @@ class HomeScreen extends StatelessWidget
     );
   }
 
-  Widget _buildNavItem(IconData icon, bool isActive)
+  Widget _buildNavItem(IconData icon, bool isSelected, VoidCallback onTap)
   {
-    return Icon(
-      icon,
-      color: isActive ? Colors.purple : Colors.grey,
-      size: 30,
+    return GestureDetector(
+      onTap: onTap,
+      child: Icon(icon, color: isSelected ? Colors.blue : Colors.grey),
     );
   }
 }
