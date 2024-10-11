@@ -52,10 +52,6 @@ class QRCodeScreen extends StatelessWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: QrPicture(
-              data: "https://example.com/mamacofron",
-              version: QrVersions.auto,
-            ),
           ),
           SizedBox(height: 20),
           Text(
