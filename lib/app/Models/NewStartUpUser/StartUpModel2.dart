@@ -1,7 +1,10 @@
+import 'package:anvayarencang/app/Models/Login/LoginScreen.dart';
 import 'package:flutter/material.dart';
 
-class FriendNotificationForm extends StatelessWidget {
-  const FriendNotificationForm({Key? key}) : super(key: key);
+import 'StartUpModel3.dart';
+
+class FriendLocatorForm extends StatelessWidget {
+  const FriendLocatorForm({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,13 +17,12 @@ class FriendNotificationForm extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/friend_notification_image.png', // Replace with your actual image asset
+                'assets/friend_locator_image.png', // Replace with your actual image asset
                 height: 200,
-                color: Colors.white, // Adjust if needed to match the purple tint
               ),
               const SizedBox(height: 20),
               const Text(
-                'Notifikasi Teman Dekat',
+                'Lacak Teman Terdekat',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 24,
@@ -29,14 +31,17 @@ class FriendNotificationForm extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               const Text(
-                'Dapatkan notifikasi saat teman berada di dekat Anda, sesuai radius yang Anda tentukan!',
+                'Temukan teman di sekitar Anda dengan lokasi real-time dan lacak mereka dengan mudah!',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey),
+                style: TextStyle(color: Colors.white70),
               ),
               const SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () {
-                  // Add navigation logic here
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => FriendNotificationForm()),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.purple, // Update this line
@@ -47,37 +52,17 @@ class FriendNotificationForm extends StatelessWidget {
               ),
               const SizedBox(height: 20),
               TextButton(
-                onPressed: () {
-                  // Add login logic here
+                onPressed: ()
+                {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                  );
                 },
                 child: const Text(
                   'Already have an account? Log In',
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(color: Colors.white70),
                 ),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Colors.purple,
-                    ),
-                  ),
-                  // Add more indicators if needed
-                ],
               ),
             ],
           ),

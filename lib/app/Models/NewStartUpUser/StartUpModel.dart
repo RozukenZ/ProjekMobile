@@ -1,4 +1,6 @@
+import 'package:anvayarencang/app/Models/Login/LoginScreen.dart';
 import 'package:flutter/material.dart';
+import 'StartUpModel2.dart';
 
 class Startupmodel extends StatelessWidget
 {
@@ -16,7 +18,7 @@ class Startupmodel extends StatelessWidget
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/friend_locator_image.png', // Replace with your actual image asset
+                'navigation-82.png', // Replace with your actual image asset
                 height: 200,
               ),
               const SizedBox(height: 20),
@@ -38,7 +40,10 @@ class Startupmodel extends StatelessWidget
               ElevatedButton(
                 onPressed: ()
                 {
-                  // Add navigation logic here
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => FriendLocatorForm()),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.purple, // Update this line
@@ -51,7 +56,10 @@ class Startupmodel extends StatelessWidget
               TextButton(
                 onPressed: ()
                 {
-                  // Add login logic here
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                  );
                 },
                 child: const Text(
                   'Already have an account? Log In',
