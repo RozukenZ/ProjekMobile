@@ -1,24 +1,19 @@
+import 'package:anvayarencang/app/Models/Feature/Feedback/FeedbackScreen.dart';
+import 'package:anvayarencang/app/Models/Feature/Notification/NotificationPreferencesScreen.dart';
+import 'package:anvayarencang/app/Models/HelpPolicy/HelpCenterScreen.dart';
 import 'package:anvayarencang/app/Models/HomeScreenModel/HomeScreen.dart';
 import 'package:flutter/material.dart';
+import '../UpdateApplication/UpdateApplicationScreen.dart';
 
 
 class AccountSettingsScreen extends StatelessWidget
 {
-  final List<String> settingsOptions = [
-    'Password Baru',
-    'Pembaruan Aplikasi',
-    'Pusat Bantuan',
-    'Preferensi Notifikasi',
-    'Umpan Balik',
-  ];
-
   @override
-  Widget build(BuildContext context)
-  {
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, color: Colors.white),
           onPressed: ()
           {
             Navigator.push(
@@ -27,46 +22,90 @@ class AccountSettingsScreen extends StatelessWidget
             );
           },
         ),
-        title: Text('Pengaturan Akun'),
+        title: Text('Pengaturan Akun', style: TextStyle(color: Colors.white)),
+        backgroundColor: Colors.black,
       ),
-      body: ListView.builder(
-        itemCount: settingsOptions.length,
-        itemBuilder: (context, index) {
-          return SettingsListItem(title: settingsOptions[index]);
-        },
-      ),
-    );
-  }
-}
-
-class SettingsListItem extends StatelessWidget
-{
-  final String title;
-
-  SettingsListItem({required this.title});
-
-  @override
-  Widget build(BuildContext context)
-  {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-      child: Container(
-        padding: EdgeInsets.all(16.0),
-        decoration: BoxDecoration(
-          color: Colors.grey[900],
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: TextStyle(fontSize: 16),
+      body: Container(
+        color: Colors.black,
+        child: Column(
+          children: <Widget>[
+            SizedBox(height: 20),
+            IconButton(
+              icon: Icon(Icons.lock, color: Colors.white),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AccountSettingsScreen()),
+                );
+              },
             ),
-            Icon(Icons.arrow_forward_ios, size: 16),
+            Text('Password Baru', style: TextStyle(color: Colors.white)),
+            SizedBox(height: 20),
+            IconButton(
+              icon: Icon(Icons.update, color: Colors.white),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => UpdateApplicationScreen()),
+                );
+              },
+            ),
+            Text('Pembaruan Aplikasi', style: TextStyle(color: Colors.white)),
+            SizedBox(height: 20),
+            IconButton(
+              icon: Icon(Icons.help, color: Colors.white),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => HelpCenterScreen()),
+                );
+              },
+            ),
+            Text('Pusat Bantuan', style: TextStyle(color: Colors.white)),
+            SizedBox(height: 20),
+            IconButton(
+              icon: Icon(Icons.notifications, color: Colors.white),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => NotificationPreferencesScreen()),
+                );
+              },
+            ),
+            Text('Preferensi Notifikasi', style: TextStyle(color: Colors.white)),
+            SizedBox(height: 20),
+            IconButton(
+              icon: Icon(Icons.feedback, color: Colors.white),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => FeedbackScreen()),
+                );
+              },
+            ),
+            Text('Umpan Balik', style: TextStyle(color: Colors.white)),
           ],
         ),
       ),
     );
   }
+}
+
+Widget _buildSettingButton(BuildContext context, String title, VoidCallback onPressed)
+{
+  return Container(
+    width: double.infinity,
+    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+    child: ElevatedButton(
+      onPressed: onPressed,
+      child: Text(title, style: TextStyle(color: Colors.white)),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Colors.grey[900],
+        padding: EdgeInsets.symmetric(vertical: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    ),
+  );
 }
