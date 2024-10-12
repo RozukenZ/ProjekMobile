@@ -2,7 +2,8 @@ import 'package:anvayarencang/app/Models/Login/LoginScreen.dart';
 import 'package:anvayarencang/app/Models/Login/SignUpScreen.dart';
 import 'package:flutter/material.dart';
 
-class ChatMeetingIntroForm extends StatelessWidget {
+class ChatMeetingIntroForm extends StatelessWidget
+{
   const ChatMeetingIntroForm({Key? key}) : super(key: key);
 
   @override
