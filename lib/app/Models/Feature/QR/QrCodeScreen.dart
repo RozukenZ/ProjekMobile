@@ -1,3 +1,4 @@
+import 'package:anvayarencang/app/Models/HomeScreenModel/HomeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
@@ -10,8 +11,12 @@ class QRCodeScreen extends StatelessWidget {
         appBar: AppBar(
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () {
-              // Handle back button press
+            onPressed: ()
+            {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => HomeScreen()),
+              );
             },
           ),
           title: Text('Kode QR', style: TextStyle(color: Colors.white)),
