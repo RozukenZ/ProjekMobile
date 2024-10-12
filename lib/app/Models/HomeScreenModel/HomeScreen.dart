@@ -12,9 +12,11 @@ import 'package:flutter/material.dart';
 
 import 'ScrollableMenuGrid.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatelessWidget
+{
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context)
+  {
     List<MenuItemData> menuItems = [
       MenuItemData(
         icon: Icons.qr_code,
