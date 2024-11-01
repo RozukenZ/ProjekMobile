@@ -33,6 +33,8 @@ dependencies:
   get: ^4.6.5
   qr_flutter: ^4.0.0
   google_maps_flutter: ^2.1.1
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -69,6 +71,7 @@ flutter:
     - lib/app/Assets/StartUpAssets/chatting-1-57.png
     - lib/app/Assets/LoginAssets/apple-logo.png
     - lib/app/Assets/LoginAssets/google_logo.png
+    - lib/app/Assets/StartUpAssets/completed-task-8.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

@@ -1,20 +1,55 @@
 import 'package:anvayarencang/app/Models/HomeScreenModel/HomeScreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'SignUpScreen.dart';
 
-
-class LoginScreen extends StatelessWidget
-{
+class LoginScreen extends StatefulWidget {
   @override
-  Widget build(BuildContext context)
-  {
+  _LoginScreenState createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  final _auth = FirebaseAuth.instance;
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  String? _errorMessage;
+
+  Future<void> _login() async {
+    try {
+      final user = await _auth.signInWithEmailAndPassword(
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+      );
+      if (user != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Login failed. Please check your email and password.';
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: ()
-          {
-            // Handle back button press
+          onPressed: () {
+            Navigator.pop(context);
           },
         ),
       ),
@@ -49,6 +84,7 @@ class LoginScreen extends StatelessWidget
             ),
             SizedBox(height: 30),
             TextField(
+              controller: _emailController,
               decoration: InputDecoration(
                 hintText: 'Email',
                 hintStyle: TextStyle(color: Colors.grey),
@@ -63,6 +99,7 @@ class LoginScreen extends StatelessWidget
             ),
             SizedBox(height: 20),
             TextField(
+              controller: _passwordController,
               obscureText: true,
               decoration: InputDecoration(
                 hintText: 'Password',
@@ -77,23 +114,25 @@ class LoginScreen extends StatelessWidget
               ),
               style: TextStyle(color: Colors.white),
             ),
+            if (_errorMessage != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Text(
+                  _errorMessage!,
+                  style: TextStyle(color: Colors.red),
+                ),
+              ),
             SizedBox(height: 30),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 child: Text('Log In'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.purple, // Use backgroundColor instead of primary
-                  foregroundColor: Colors.white, // Use foregroundColor instead of onPrimary
+                  backgroundColor: Colors.purple,
+                  foregroundColor: Colors.white,
                   padding: EdgeInsets.symmetric(vertical: 15),
                 ),
-                onPressed: ()
-                {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => HomeScreen()),
-                  );
-                },
+                onPressed: _login,
               ),
             ),
             SizedBox(height: 20),
@@ -106,6 +145,13 @@ class LoginScreen extends StatelessWidget
                     TextSpan(
                       text: 'Sign Up',
                       style: TextStyle(color: Colors.purple),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => SignUpScreen()),
+                        );
+                        },
                     ),
                   ],
                 ),

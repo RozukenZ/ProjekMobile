@@ -2,20 +2,19 @@ import 'package:anvayarencang/app/Models/Feature/Feedback/FeedbackScreen.dart';
 import 'package:anvayarencang/app/Models/Feature/Notification/NotificationPreferencesScreen.dart';
 import 'package:anvayarencang/app/Models/HelpPolicy/HelpCenterScreen.dart';
 import 'package:anvayarencang/app/Models/HomeScreenModel/HomeScreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../UpdateApplication/UpdateApplicationScreen.dart';
+import 'package:anvayarencang/app/Models/Login/LoginScreen.dart';
 
-
-class AccountSettingsScreen extends StatelessWidget
-{
+class AccountSettingsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: ()
-          {
+          onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => HomeScreen()),
@@ -84,28 +83,40 @@ class AccountSettingsScreen extends StatelessWidget
               },
             ),
             Text('Umpan Balik', style: TextStyle(color: Colors.white)),
+            Spacer(),
+            _buildSettingButton(
+              context,
+              'Logout',
+                  () async {
+                await FirebaseAuth.instance.signOut();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginScreen()),
+                );
+              },
+            ),
+            SizedBox(height: 20),
           ],
         ),
       ),
     );
   }
-}
 
-Widget _buildSettingButton(BuildContext context, String title, VoidCallback onPressed)
-{
-  return Container(
-    width: double.infinity,
-    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-    child: ElevatedButton(
-      onPressed: onPressed,
-      child: Text(title, style: TextStyle(color: Colors.white)),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.grey[900],
-        padding: EdgeInsets.symmetric(vertical: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+  Widget _buildSettingButton(BuildContext context, String title, VoidCallback onPressed) {
+    return Container(
+      width: double.infinity,
+      margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: ElevatedButton(
+        onPressed: onPressed,
+        child: Text(title, style: TextStyle(color: Colors.white)),
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.grey[900],
+          padding: EdgeInsets.symmetric(vertical: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }

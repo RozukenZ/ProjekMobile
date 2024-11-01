@@ -1,20 +1,24 @@
-import 'package:anvayarencang/app/Models/Login/LoginScreen.dart';
+import 'package:anvayarencang/app/Models/Login/SuccessScreen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'LoginScreen.dart';
 
+class SignUpScreen extends StatelessWidget {
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-class SignUpScreen extends StatelessWidget
-{
   @override
-  Widget build(BuildContext context)
-  {
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: ()
-          {
-            // Handle back button press
+          onPressed: () {
+            Navigator.pop(context);
           },
         ),
       ),
@@ -49,6 +53,7 @@ class SignUpScreen extends StatelessWidget
             ),
             SizedBox(height: 30),
             TextField(
+              controller: _nameController,
               decoration: InputDecoration(
                 hintText: 'Name',
                 hintStyle: TextStyle(color: Colors.grey),
@@ -63,6 +68,7 @@ class SignUpScreen extends StatelessWidget
             ),
             SizedBox(height: 20),
             TextField(
+              controller: _emailController,
               decoration: InputDecoration(
                 hintText: 'Email',
                 hintStyle: TextStyle(color: Colors.grey),
@@ -77,6 +83,7 @@ class SignUpScreen extends StatelessWidget
             ),
             SizedBox(height: 20),
             TextField(
+              controller: _passwordController,
               obscureText: true,
               decoration: InputDecoration(
                 hintText: 'Password',
@@ -100,12 +107,29 @@ class SignUpScreen extends StatelessWidget
                   backgroundColor: Colors.purple,
                   padding: EdgeInsets.symmetric(vertical: 15),
                 ),
-                onPressed: ()
-                {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginScreen()),
-                  );
+                onPressed: () async {
+                  try {
+                    final String name = _nameController.text.trim();
+                    final String email = _emailController.text.trim();
+                    final String password = _passwordController.text.trim();
+
+                    UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+                      email: email,
+                      password: password,
+                    );
+
+                    await userCredential.user?.updateDisplayName(name);
+
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => SuccessScreen()),
+                    );
+                  } catch (e) {
+                    print(e);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Failed to sign up: ${e.toString()}')),
+                    );
+                  }
                 },
               ),
             ),
@@ -135,6 +159,13 @@ class SignUpScreen extends StatelessWidget
                     TextSpan(
                       text: 'Sign In',
                       style: TextStyle(color: Colors.purple),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => LoginScreen()),
+                        );
+                        },
                     ),
                   ],
                 ),
@@ -146,8 +177,7 @@ class SignUpScreen extends StatelessWidget
     );
   }
 
-  Widget _buildSocialButton(String iconPath)
-  {
+  Widget _buildSocialButton(String iconPath) {
     return Container(
       padding: EdgeInsets.all(10),
       decoration: BoxDecoration(
