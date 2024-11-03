@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "734753240569",
+    "project_id": "projekmobile-3cf4c",
+    "storage_bucket": "projekmobile-3cf4c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:734753240569:android:742fb0efaf86224e63f928",
+        "android_client_info": {
+          "package_name": "com.example.anvayarencang"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-Ihq0Gr7n0aYv7FkVPbNtLEQOXQiDi6Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
