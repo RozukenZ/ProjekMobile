@@ -8,6 +8,7 @@ import 'package:anvayarencang/app/Models/Feature/FriendsList/FriendsListScreen.d
 import 'package:anvayarencang/app/Models/Feature/QR/QrCodeScreen.dart';
 import 'package:anvayarencang/app/Models/Feature/RecentActivity/RecentActivityScreen.dart';
 import 'package:anvayarencang/app/Models/Feature/Setting/SettingScreen.dart';
+import 'package:anvayarencang/app/Models/HomeScreenModel/HomeMap.dart';
 import 'package:flutter/material.dart';
 
 import 'ScrollableMenuGrid.dart';
@@ -87,12 +88,7 @@ class HomeScreen extends StatelessWidget
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  // Placeholder for the illustration
-                  Container(
-                    height: 200,
-                    color: Colors.grey[900],
-                    child: Center(child: Text('Map Illustration Placeholder')),
-                  ),
+                  CurrentLocationMap(),
                   SizedBox(height: 20),
                   // Scrollable menu items
                   ScrollableMenuGrid(menuItems: menuItems),
