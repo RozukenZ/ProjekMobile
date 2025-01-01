@@ -1,64 +1,73 @@
-import 'package:anvayarencang/app/Models/HomeScreenModel/HomeScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class FavoriteLocationsScreen extends StatelessWidget
-{
-  final List<Map<String, String>> locations = [
-    {
-      'name': 'Rumah Sianida',
-      'address': 'Jl. Mawar No.10 Malang',
-      'icon': 'home',
-    },
-    {
-      'name': 'Kantor Jessika Wongso',
-      'address': 'Jl. Lapis Legit No.4 Malang',
-      'icon': 'business',
-    },
-  ];
+class FavoriteLocationsScreen extends StatelessWidget {
+  final CollectionReference locationsCollection =
+  FirebaseFirestore.instance.collection('locations');
+  final String userId = FirebaseAuth.instance.currentUser?.uid ?? "";
 
   @override
-  Widget build(BuildContext context)
-  {
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: ()
-          {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => HomeScreen()),
-            );
+          onPressed: () {
+            Navigator.pop(context);
           },
         ),
         title: Text('Lokasi Favorit'),
       ),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Cari Event...',
-                prefixIcon: Icon(Icons.search),
-                filled: true,
-                fillColor: Colors.grey[900],
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(30),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-          ),
           Expanded(
-            child: ListView.builder(
-              itemCount: locations.length,
-              itemBuilder: (context, index)
-              {
-                return LocationListItem(
-                  name: locations[index]['name']!,
-                  address: locations[index]['address']!,
-                  icon: locations[index]['icon']!,
+            child: StreamBuilder<QuerySnapshot>(
+              stream: locationsCollection.snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return Center(
+                    child: Text(
+                      'Tidak ada lokasi favorit.',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  );
+                }
+
+                final locations = snapshot.data!.docs;
+
+                return ListView.builder(
+                  itemCount: locations.length,
+                  itemBuilder: (context, index) {
+                    final location = locations[index];
+                    final data = location.data() as Map<String, dynamic>;
+                    final likedBy = List<String>.from(data['likedBy'] ?? []);
+
+                    return LocationListItem(
+                      name: data['name'] ?? 'Lokasi',
+                      address: data['address'] ?? 'Alamat tidak tersedia',
+                      isLiked: likedBy.contains(userId),
+                      likesCount: data['likes'] ?? 0,
+                      onLike: () async {
+                        if (likedBy.contains(userId)) {
+                          // Batalkan like
+                          await locationsCollection.doc(location.id).update({
+                            'likes': FieldValue.increment(-1),
+                            'likedBy': FieldValue.arrayRemove([userId]),
+                          });
+                        } else {
+                          // Tambahkan like
+                          await locationsCollection.doc(location.id).update({
+                            'likes': FieldValue.increment(1),
+                            'likedBy': FieldValue.arrayUnion([userId]),
+                          });
+                        }
+                      },
+                    );
+                  },
                 );
               },
             ),
@@ -72,12 +81,16 @@ class FavoriteLocationsScreen extends StatelessWidget
 class LocationListItem extends StatelessWidget {
   final String name;
   final String address;
-  final String icon;
+  final bool isLiked;
+  final int likesCount;
+  final VoidCallback onLike;
 
   LocationListItem({
     required this.name,
     required this.address,
-    required this.icon,
+    required this.isLiked,
+    required this.likesCount,
+    required this.onLike,
   });
 
   @override
@@ -87,7 +100,7 @@ class LocationListItem extends StatelessWidget {
       child: Row(
         children: [
           Icon(
-            icon == 'home' ? Icons.home : Icons.business,
+            Icons.location_on,
             size: 30,
             color: Colors.white,
           ),
@@ -107,9 +120,21 @@ class LocationListItem extends StatelessWidget {
               ],
             ),
           ),
-          Icon(Icons.favorite, color: Colors.red),
-          SizedBox(width: 8),
-          Icon(Icons.more_vert),
+          Row(
+            children: [
+              Text(
+                '$likesCount',
+                style: TextStyle(color: Colors.white),
+              ),
+              IconButton(
+                icon: Icon(
+                  isLiked ? Icons.favorite : Icons.favorite_border,
+                  color: isLiked ? Colors.red : Colors.white,
+                ),
+                onPressed: onLike,
+              ),
+            ],
+          ),
         ],
       ),
     );
