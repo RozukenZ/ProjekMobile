@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class FeedbackScreen extends StatefulWidget
-{
+class FeedbackScreen extends StatefulWidget {
   @override
   _FeedbackScreenState createState() => _FeedbackScreenState();
 }
 
-class _FeedbackScreenState extends State<FeedbackScreen>
-{
+class _FeedbackScreenState extends State<FeedbackScreen> {
   final TextEditingController _feedbackController = TextEditingController();
 
+  // Referensi ke koleksi Firestore
+  final CollectionReference feedbackCollection =
+  FirebaseFirestore.instance.collection('feedbacks');
+
   @override
-  Widget build(BuildContext context)
-  {
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
@@ -63,16 +65,19 @@ class _FeedbackScreenState extends State<FeedbackScreen>
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              onPressed: ()
-              {
-                // TODO: Implement send functionality
+              onPressed: () async {
                 if (_feedbackController.text.isNotEmpty) {
+                  // Simpan data ke Firestore
+                  await feedbackCollection.add({
+                    'feedback': _feedbackController.text,
+                    'timestamp': FieldValue.serverTimestamp(),
+                  });
+
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Umpan balik terkirim')),
                   );
                   _feedbackController.clear();
-                } else
-                {
+                } else {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Mohon isi umpan balik')),
                   );
@@ -86,8 +91,7 @@ class _FeedbackScreenState extends State<FeedbackScreen>
   }
 
   @override
-  void dispose()
-  {
+  void dispose() {
     _feedbackController.dispose();
     super.dispose();
   }
