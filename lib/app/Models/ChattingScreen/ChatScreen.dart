@@ -1,19 +1,34 @@
+// ChatScreen.dart (continued)
 import 'package:anvayarencang/app/Models/HomeScreenModel/HomeScreen.dart';
+import 'package:anvayarencang/app/Models/message_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:anvayarencang/app/Services/firebase_service.dart';
 
+class ChatScreen extends StatefulWidget {
+  final String friendId;
+  final String friendEmail;
 
-class ChatScreen extends StatelessWidget
-{
+  ChatScreen({required this.friendId, required this.friendEmail});
+
   @override
-  Widget build(BuildContext context)
-  {
+  _ChatScreenState createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
+  final TextEditingController _messageController = TextEditingController();
+  final FirebaseService _firebaseService = FirebaseService();
+  final ScrollController _scrollController = ScrollController();
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: ()
-          {
+          onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => HomeScreen()),
@@ -24,36 +39,39 @@ class ChatScreen extends StatelessWidget
           children: [
             CircleAvatar(
               backgroundColor: Colors.grey,
-              child: Text('MG'),
+              child: Text(widget.friendEmail[0].toUpperCase()),
             ),
             SizedBox(width: 10),
-            Text('Mama Gufron'),
+            Text(widget.friendEmail),
           ],
         ),
       ),
       body: Column(
         children: [
           Expanded(
-            child: ListView(
-              padding: EdgeInsets.all(8),
-              children: [
-                ChatBubble(
-                  message: 'Cek sound dulu Mama Gufron !!!',
-                  isUser: true,
-                ),
-                ChatBubble(
-                  message: 'Ashkoli tnakoli yoma kali tnaka Ghufran.',
-                  isUser: false,
-                ),
-                ChatBubble(
-                  message: 'Mantap kali wak tek',
-                  isUser: true,
-                ),
-                ChatBubble(
-                  message: 'Ada jga gak broo, sepi kali minggu ini he..he..',
-                  isUser: false,
-                ),
-              ],
+            child: StreamBuilder<List<MessageModel>>(
+              stream: _firebaseService.getMessages(widget.friendId),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                final messages = snapshot.data!;
+                return ListView.builder(
+                  controller: _scrollController,
+                  reverse: true,
+                  padding: EdgeInsets.all(8),
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
+                    final message = messages[index];
+                    final isUser = message.senderId == FirebaseAuth.instance.currentUser?.uid;
+                    return ChatBubble(
+                      message: message.content,
+                      isUser: isUser,
+                    );
+                  },
+                );
+              },
             ),
           ),
           Container(
@@ -63,13 +81,13 @@ class ChatScreen extends StatelessWidget
               children: [
                 IconButton(
                   icon: Icon(Icons.camera_alt),
-                  onPressed: ()
-                  {
+                  onPressed: () {
                     // Handle camera button press
                   },
                 ),
                 Expanded(
                   child: TextField(
+                    controller: _messageController,
                     decoration: InputDecoration(
                       hintText: 'Tulis pesan...',
                       border: InputBorder.none,
@@ -78,9 +96,19 @@ class ChatScreen extends StatelessWidget
                 ),
                 IconButton(
                   icon: Icon(Icons.send),
-                  onPressed: ()
-                  {
-                    // Handle send button press
+                  onPressed: () {
+                    if (_messageController.text.isNotEmpty) {
+                      _firebaseService.sendMessage(
+                        widget.friendId,
+                        _messageController.text,
+                      );
+                      _messageController.clear();
+                      _scrollController.animateTo(
+                        0,
+                        duration: Duration(milliseconds: 300),
+                        curve: Curves.easeOut,
+                      );
+                    }
                   },
                 ),
                 IconButton(
@@ -95,6 +123,13 @@ class ChatScreen extends StatelessWidget
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _messageController.dispose();
+    _scrollController.dispose();
+    super.dispose();
   }
 }
 

@@ -1,25 +1,34 @@
-import 'package:anvayarencang/app/Models/HomeScreenModel/HomeScreen.dart';
+import 'package:anvayarencang/app/Models/user_model.dart';
 import 'package:flutter/material.dart';
+import 'package:anvayarencang/app/Models/HomeScreenModel/HomeScreen.dart';
+import 'package:anvayarencang/app/Services/firebase_service.dart';
 
-class FindFriendsScreen extends StatefulWidget
-{
+class FindFriendsScreen extends StatefulWidget {
   @override
   _FindFriendsScreenState createState() => _FindFriendsScreenState();
 }
 
-class _FindFriendsScreenState extends State<FindFriendsScreen>
-{
+class _FindFriendsScreenState extends State<FindFriendsScreen> {
   final TextEditingController _searchController = TextEditingController();
+  final FirebaseService _firebaseService = FirebaseService();
+  List<UserModel> _searchResults = [];
+
+  void _searchUsers(String query) async {
+    if (query.isEmpty) {
+      setState(() => _searchResults = []);
+      return;
+    }
+    final results = await _firebaseService.searchUsers(query);
+    setState(() => _searchResults = results);
+  }
 
   @override
-  Widget build(BuildContext context)
-  {
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: ()
-          {
+          onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => HomeScreen()),
@@ -34,6 +43,7 @@ class _FindFriendsScreenState extends State<FindFriendsScreen>
             padding: const EdgeInsets.all(16.0),
             child: TextField(
               controller: _searchController,
+              onChanged: _searchUsers,
               decoration: InputDecoration(
                 hintText: 'Cari Teman...',
                 prefixIcon: Icon(Icons.search),
@@ -47,11 +57,12 @@ class _FindFriendsScreenState extends State<FindFriendsScreen>
             ),
           ),
           Expanded(
-            child: ListView(
-              children: [
-                _buildFriendSuggestion('Son Goku'),
-                _buildFriendSuggestion('Killua Zoldyck'),
-              ],
+            child: ListView.builder(
+              itemCount: _searchResults.length,
+              itemBuilder: (context, index) {
+                final user = _searchResults[index];
+                return _buildFriendSuggestion(user.email, user.uid);
+              },
             ),
           ),
         ],
@@ -59,7 +70,7 @@ class _FindFriendsScreenState extends State<FindFriendsScreen>
     );
   }
 
-  Widget _buildFriendSuggestion(String name) {
+  Widget _buildFriendSuggestion(String name, String uid) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Container(
@@ -86,10 +97,7 @@ class _FindFriendsScreenState extends State<FindFriendsScreen>
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
-              onPressed: ()
-              {
-                // Handle add friend
-              },
+              onPressed: () => _firebaseService.addFriend(uid),
             ),
           ],
         ),

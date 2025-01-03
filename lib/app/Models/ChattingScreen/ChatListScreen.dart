@@ -1,19 +1,19 @@
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:anvayarencang/app/Models/ChattingScreen/ChatScreen.dart';
 import 'package:anvayarencang/app/Models/HomeScreenModel/HomeScreen.dart';
-import 'package:flutter/material.dart';
+import 'package:anvayarencang/app/Services/firebase_service.dart';
 
+class ChatListScreen extends StatelessWidget {
+  final FirebaseService _firebaseService = FirebaseService();
 
-class ChatListScreen extends StatelessWidget
-{
   @override
-  Widget build(BuildContext context)
-  {
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
-          onPressed: ()
-          {
+          onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => HomeScreen()),
@@ -40,11 +40,48 @@ class ChatListScreen extends StatelessWidget
             ),
           ),
           Expanded(
-            child: ListView(
-              children: [
-                ChatListItem(name: 'Son Goku'),
-                ChatListItem(name: 'Mama Gufron'),
-              ],
+            child: StreamBuilder<List<String>>(
+              stream: _firebaseService.getFriendsList(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                final friendIds = snapshot.data!;
+                return ListView.builder(
+                  itemCount: friendIds.length,
+                  itemBuilder: (context, index) {
+                    final friendId = friendIds[index];
+                    return FutureBuilder(
+                      future: FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(friendId)
+                          .get(),
+                      builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+                        if (!snapshot.hasData) {
+                          return ListTile(title: Text('Loading...'));
+                        }
+
+                        final friendData = snapshot.data!.data() as Map<String, dynamic>;
+                        return ChatListItem(
+                          name: friendData['email'],
+                          onChatPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChatScreen(
+                                  friendId: friendId,
+                                  friendEmail: friendData['email'],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    );
+                  },
+                );
+              },
             ),
           ),
         ],
@@ -53,15 +90,14 @@ class ChatListScreen extends StatelessWidget
   }
 }
 
-class ChatListItem extends StatelessWidget
-{
+class ChatListItem extends StatelessWidget {
   final String name;
+  final VoidCallback onChatPressed;
 
-  ChatListItem({required this.name});
+  ChatListItem({required this.name, required this.onChatPressed});
 
   @override
-  Widget build(BuildContext context)
-  {
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: Row(
@@ -78,13 +114,7 @@ class ChatListItem extends StatelessWidget
             ),
           ),
           ElevatedButton(
-            onPressed: ()
-            {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ChatScreen()),
-              );
-            },
+            onPressed: onChatPressed,
             child: Text('Chat'),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.purple,

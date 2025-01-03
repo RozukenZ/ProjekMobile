@@ -4,15 +4,7 @@ import 'package:flutter/material.dart';
 
 class RecentActivitiesScreen extends StatelessWidget
 {
-  final List<Map<String, String>> activities = List.generate(
-    4,
-        (index) =>
-        {
-      'title': 'Bertemu dengan Sugeng',
-      'time': '09:00 WIB',
-      'location': 'Kafe Ambarita, Radius: 200 meter',
-    },
-  );
+
 
   @override
   Widget build(BuildContext context)
@@ -31,17 +23,7 @@ class RecentActivitiesScreen extends StatelessWidget
         ),
         title: Text('Aktivitas Terakhir'),
       ),
-      body: ListView.builder(
-        itemCount: activities.length,
-        itemBuilder: (context, index)
-        {
-          return ActivityListItem(
-            title: activities[index]['title']!,
-            time: activities[index]['time']!,
-            location: activities[index]['location']!,
-          );
-        },
-      ),
+
     );
   }
 }
