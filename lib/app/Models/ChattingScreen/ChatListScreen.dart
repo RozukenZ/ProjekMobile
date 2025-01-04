@@ -1,50 +1,124 @@
-import 'package:anvayarencang/app/Models/ChattingScreen/ChatScreen.dart';
-import 'package:anvayarencang/app/Models/HomeScreenModel/HomeScreen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:anvayarencang/app/Models/HomeScreenModel/HomeScreen.dart';
+
+import '../../Services/chat_service.dart';
+import 'ChatScreen.dart';
 
 
-class ChatListScreen extends StatelessWidget
-{
+class ChatListScreen extends StatefulWidget {
   @override
-  Widget build(BuildContext context)
-  {
+  State<ChatListScreen> createState() => _ChatListScreenState();
+}
+
+class _ChatListScreenState extends State<ChatListScreen> {
+  final TextEditingController _searchController = TextEditingController();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  String _searchQuery = '';
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF121B22),
       appBar: AppBar(
+        backgroundColor: const Color(0xFF1F2C34),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: ()
-          {
-            Navigator.push(
+          icon: const Icon(Icons.arrow_back, color: Colors.grey),
+          onPressed: () {
+            Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => HomeScreen()),
             );
           },
         ),
-        title: Text('Chat'),
+        title: const Text(
+          'Chat',
+          style: TextStyle(color: Colors.white),
+        ),
       ),
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(12.0),
             child: TextField(
+              controller: _searchController,
+              style: const TextStyle(color: Colors.white),
               decoration: InputDecoration(
-                hintText: 'Cari',
-                prefixIcon: Icon(Icons.search),
+                hintText: 'Search users...',
+                hintStyle: const TextStyle(color: Colors.grey),
+                prefixIcon: const Icon(Icons.search, color: Colors.grey),
                 filled: true,
-                fillColor: Colors.grey[900],
+                fillColor: const Color(0xFF2D3A3D),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30),
                   borderSide: BorderSide.none,
                 ),
               ),
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value.toLowerCase();
+                });
+              },
             ),
           ),
           Expanded(
-            child: ListView(
-              children: [
-                ChatListItem(name: 'Son Goku'),
-                ChatListItem(name: 'Mama Gufron'),
-              ],
+            child: StreamBuilder<QuerySnapshot>(
+              stream: _firestore.collection('users').snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      'Error: ${snapshot.error}',
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  );
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: Color(0xFF00A884),
+                    ),
+                  );
+                }
+
+                // Filter users based on search query
+                final users = snapshot.data!.docs.where((doc) {
+                  final userData = doc.data() as Map<String, dynamic>;
+                  final email = userData['email'] as String;
+                  final currentUserId = _auth.currentUser!.uid;
+
+                  return email.toLowerCase().contains(_searchQuery) &&
+                      doc.id != currentUserId;
+                }).toList();
+
+                if (users.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      'No users found',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  itemCount: users.length,
+                  itemBuilder: (context, index) {
+                    final userData = users[index].data() as Map<String, dynamic>;
+                    final userEmail = userData['email'] as String;
+                    final userId = users[index].id;
+
+                    return ChatListItem(
+                      email: userEmail,
+                      userId: userId,
+                    );
+                  },
+                );
+              },
             ),
           ),
         ],
@@ -53,47 +127,68 @@ class ChatListScreen extends StatelessWidget
   }
 }
 
-class ChatListItem extends StatelessWidget
-{
-  final String name;
+class ChatListItem extends StatelessWidget {
+  final String email;
+  final String userId;
+  final ChatService _chatService = ChatService();
 
-  ChatListItem({required this.name});
+  ChatListItem({
+    required this.email,
+    required this.userId,
+    Key? key,
+  }) : super(key: key);
 
   @override
-  Widget build(BuildContext context)
-  {
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      child: Row(
-        children: [
-          CircleAvatar(
-            backgroundColor: Colors.grey[800],
-            child: Icon(Icons.person, color: Colors.white),
-          ),
-          SizedBox(width: 16),
-          Expanded(
+      child: Container(
+        decoration: BoxDecoration(
+          color: const Color(0xFF1F2C34),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: ListTile(
+          leading: CircleAvatar(
+            backgroundColor: const Color(0xFF00A884),
             child: Text(
-              name,
-              style: TextStyle(fontSize: 16),
+              email[0].toUpperCase(),
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
-          ElevatedButton(
-            onPressed: ()
-            {
+          title: Text(
+            email,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+            ),
+          ),
+          trailing: ElevatedButton(
+            onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => ChatScreen()),
+                MaterialPageRoute(
+                  builder: (context) => ChatScreen(
+                    receiverUserEmail: email,
+                    receiverUserID: userId,
+                  ),
+                ),
               );
             },
-            child: Text('Chat'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.purple,
+              backgroundColor: const Color(0xFF00A884),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
             ),
+            child: const Text(
+              'Chat',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
-        ],
+        ),
       ),
     );
   }
